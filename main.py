@@ -32,27 +32,26 @@ def clear():
 
 def renderCurrentTime():
     global timing
-    renderCurrentTimeBox()
     if timing:
         current_flight_time = flight_time(times[len(times)-1].start, time.ticks_ms())
         renderTimeInMainBox(current_flight_time)
     else:
         renderTimeInMainBox(flight_time(0,0))
 
-def renderCurrentTimeBox():
+def renderCurrentTimeBox(colour):
     # Draw current time box
-    if(timing):
-        display.set_pen(GREEN)    
-    else:  
-        display.set_pen(RED)    
+    display.set_pen(colour)    
     display.rectangle(8, 10, 220, 50)
     display.set_pen(BLACK)   
     display.rectangle(10, 12, 216, 46) 
-    if(len(times)) < 1: 
-        renderTimeInMainBox(flight_time(0,0))
     display.update()   
 
+previousTime = flight_time(0,0)
 def renderTimeInMainBox(ftime):
+    global previousTime
+    display.set_pen(BLACK)  
+    display.text(getFlightTimeAsString(previousTime), 33, 18, 5, 5) 
+    previousTime = ftime
     display.set_pen(WHITE)  
     display.text(getFlightTimeAsString(ftime), 33, 18, 5, 5) 
     display.update()   
@@ -73,10 +72,10 @@ def reset():
     if timing == True:
         return
     else:
-        print(f'reset.')
         times.clear()
         timing = False
         clear()
+        renderCurrentTimeBox(RED)
         renderCurrentTime()
 
 def startStopTimer():
@@ -92,6 +91,7 @@ def startTimer():
         return
     else:
         timing = True
+        renderCurrentTimeBox(GREEN)
         times.append(flight_time(time.ticks_ms(), time.ticks_ms()))
         
 def stopTimer():
@@ -100,6 +100,7 @@ def stopTimer():
         return
     else:
         timing = False
+        renderCurrentTimeBox(RED)
         times[len(times)-1].stop = time.ticks_ms()   
         renderTimes()
         
@@ -108,6 +109,7 @@ display.set_font("bitmap8")
 display.set_backlight(1.0)
 times = []
 timing = False
+renderCurrentTimeBox(RED)
 
 while True:
     renderCurrentTime()
