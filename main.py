@@ -19,12 +19,11 @@ button_y = Button(15)
 
 
 def getFlightTimeAsString(flightTime):
-    sec = flightTime.stop - flightTime.start
-    mins = sec // 60
-    sec = sec % 60
-    mins = mins % 60
-    millisecs = int(sec * 1000)
-    return f'{int(mins):02d}:{int(sec):02d}.{millisecs:<02d}'
+    totalTimeAsMilliseconds = (flightTime.stop - flightTime.start)
+    print(totalTimeAsMilliseconds)
+    s, ms = divmod(totalTimeAsMilliseconds, 1000)
+    m, sec = divmod(s, 60)
+    return f'{m:02d}:{sec:02d}.{ms:0>3d}'[:-1]
 
 def clear(): 
     display.set_pen(BLACK)
@@ -35,14 +34,17 @@ def renderCurrentTime():
     global timing
     renderCurrentTimeBox()
     if timing:
-        current_flight_time = flight_time(times[len(times)-1].start, time.time())
+        current_flight_time = flight_time(times[len(times)-1].start, time.ticks_ms())
         renderTimeInMainBox(current_flight_time)
     else:
         renderTimeInMainBox(flight_time(0,0))
 
 def renderCurrentTimeBox():
     # Draw current time box
-    display.set_pen(RED)      
+    if(timing):
+        display.set_pen(GREEN)    
+    else:  
+        display.set_pen(RED)    
     display.rectangle(8, 10, 220, 50)
     display.set_pen(BLACK)   
     display.rectangle(10, 12, 216, 46) 
@@ -57,14 +59,12 @@ def renderTimeInMainBox(ftime):
 
 def renderTimes():
     index = 0
-    print(times)
     for ftime in times:
         index = index + 1
         display.set_pen(WHITE)
         display.text(f'{index}.', 20, 25*index+42, 200, 3)   
         display.set_pen(GREEN)
-        display.text(getFlightTimeAsString(ftime), 80, 25*index+42, 200, 3)    
-        print(getFlightTimeAsString(ftime))
+        display.text(getFlightTimeAsString(ftime), 80, 25*index+42, 200, 3)
 
     display.update()   
 
@@ -92,8 +92,7 @@ def startTimer():
         return
     else:
         timing = True
-        print(f'start.')
-        times.append(flight_time(time.time(), time.time()))
+        times.append(flight_time(time.ticks_ms(), time.ticks_ms()))
         
 def stopTimer():
     global timing
@@ -101,8 +100,7 @@ def stopTimer():
         return
     else:
         timing = False
-        print(f'stop.')
-        times[len(times)-1].stop = time.time()   
+        times[len(times)-1].stop = time.ticks_ms()   
         renderTimes()
         
 
@@ -113,21 +111,16 @@ timing = False
 
 while True:
     renderCurrentTime()
-    #print(getFlightTimeAsString(current_flight))
-    #print(f"start={current_flight.start} stop={current_flight.stop}")
     if button_a.is_pressed:
         reset()
-        time.sleep(0.5)
+        time.sleep(0.1)
         continue
     if button_b.is_pressed :
         startStopTimer()
-        time.sleep(0.5)
+        time.sleep(0.1)
         continue
     if button_x.is_pressed:
-        #startStopTimer()
-        time.sleep(0.5)
         continue
     if button_y.is_pressed:
-        #showAllTimes()
-        time.sleep(0.5)
         continue
+    
