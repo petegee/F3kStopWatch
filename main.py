@@ -20,7 +20,6 @@ button_y = Button(15)
 
 def getFlightTimeAsString(flightTime):
     totalTimeAsMilliseconds = (flightTime.stop - flightTime.start)
-    print(totalTimeAsMilliseconds)
     s, ms = divmod(totalTimeAsMilliseconds, 1000)
     m, sec = divmod(s, 60)
     return f'{m:02d}:{sec:02d}.{ms:0>3d}'[:-1]
@@ -104,11 +103,20 @@ def stopTimer():
         times[len(times)-1].stop = time.ticks_ms()   
         renderTimes()
         
+def splash():
+    display.set_pen(GREEN)
+    display.text("F3K Stopwatch", 28, 25, 200, 3)
+    display.update() 
+    time.sleep(2)
+    clear()
+
 
 display.set_font("bitmap8")
 display.set_backlight(1.0)
 times = []
 timing = False
+
+splash()
 renderCurrentTimeBox(RED)
 
 while True:
