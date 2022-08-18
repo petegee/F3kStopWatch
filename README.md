@@ -1,6 +1,8 @@
 # F3K Stop Watch Project
 This repo contains the code and instructions to build your own F3K stopwatch.
 
+![](/pic.jpg)
+
 ## What is it?
 Its a home-made stopwatch using a raspberry pi pico micro-controller and pimoroni2 OLED display to use for timing a pilot competing in an F3K discus-launched glider contest.
 
