@@ -17,6 +17,8 @@ button_b = Button(13)
 button_x = Button(14)
 button_y = Button(15)
 
+button_b_down = False
+
 
 def getFlightTimeAsString(flightTime):
     totalTimeAsMilliseconds = (flightTime.stop - flightTime.start)
@@ -110,7 +112,6 @@ def splash():
     time.sleep(2)
     clear()
 
-
 display.set_font("bitmap8")
 display.set_backlight(1.0)
 times = []
@@ -125,7 +126,10 @@ while True:
         reset()
         time.sleep(0.1)
         continue
-    if button_b.is_pressed :
+    if button_b.is_pressed:
+        if(button_b_down): 
+            continue
+        button_b_down = True
         startStopTimer()
         time.sleep(0.1)
         continue
@@ -133,4 +137,6 @@ while True:
         continue
     if button_y.is_pressed:
         continue
+    
+    button_b_down = False
     
