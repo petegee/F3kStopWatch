@@ -17,8 +17,10 @@ button_b = Button(13)
 button_x = Button(14)
 button_y = Button(15)
 
+max_rows = 10
 button_b_down = False
-
+skip = 0
+total_completed_times=0
 
 def getFlightTimeAsString(flightTime):
     totalTimeAsMilliseconds = (flightTime.stop - flightTime.start)
@@ -58,23 +60,31 @@ def renderTimeInMainBox(ftime):
     display.update()   
 
 def renderTimes():
+    global skip, total_completed_times
+    display.set_pen(BLACK)   
+    display.rectangle(0, 64, 320, 293) 
+    display.update() 
     index = 0
-    for ftime in times:
+    for i in range(skip, total_completed_times):
+        if index == max_rows:
+            break
         index = index + 1
         display.set_pen(WHITE)
-        display.text(f'{index}.', 20, 25*index+42, 200, 3)   
+        display.text(f'{i+1}.', 20, 25*index+42, 200, 3)   
         display.set_pen(GREEN)
-        display.text(getFlightTimeAsString(ftime), 80, 25*index+42, 200, 3)
+        display.text(getFlightTimeAsString(times[i]), 80, 25*index+42, 200, 3)
 
     display.update()   
 
 def reset():
-    global timing
+    global timing, total_completed_times, skip
     if timing == True:
         return
     else:
         times.clear()
         timing = False
+        total_completed_times=0
+        skip=0
         clear()
         renderCurrentTimeBox(RED)
         renderCurrentTime()
@@ -96,13 +106,14 @@ def startTimer():
         times.append(flight_time(time.ticks_ms(), time.ticks_ms()))
         
 def stopTimer():
-    global timing
+    global timing, total_completed_times
     if timing == False:
         return
     else:
         timing = False
         renderCurrentTimeBox(RED)
         times[len(times)-1].stop = time.ticks_ms()   
+        total_completed_times = total_completed_times + 1
         renderTimes()
         
 def splash():
@@ -122,6 +133,10 @@ renderCurrentTimeBox(RED)
 
 while True:
     renderCurrentTime()
+    overflowed_times_count = 0
+    if total_completed_times - max_rows > 0:
+        overflowed_times_count =  total_completed_times - max_rows
+
     if button_a.is_pressed:
         reset()
         time.sleep(0.1)
@@ -134,8 +149,16 @@ while True:
         time.sleep(0.1)
         continue
     if button_x.is_pressed:
+        if overflowed_times_count > 0 and skip > 0:
+            skip = skip - 1
+            renderTimes()
+        time.sleep(0.1)
         continue
     if button_y.is_pressed:
+        if overflowed_times_count > 0 and skip < overflowed_times_count:
+            skip = skip + 1
+            renderTimes()
+        time.sleep(0.1)
         continue
     
     button_b_down = False
