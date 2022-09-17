@@ -39,6 +39,8 @@ https://a360.co/3djS4cy
 ## Thoughts So Far
 I have completed my first watch and the assembly was a bit tighter than i had hoped, so i had to file a few spots on the momentaries to get the board to fit in its home. 
 
-The run time on mine with a fully charged 800mAh 14500 Li-Ion battery was over 3 1/2 hours. So more than enough for 20 odd 10min rounds of f3k. So easily a day of comp with head-room.
+The run time on mine with a fully charged 800mAh 14500 Li-Ion battery was over 7 hours. So more than enough for a whole weekend of 10min rounds of f3k.
+
+Daylight readability of the screen is OK, just not amazing. Under the direct high summer sun, a bit of body sheilding light may help.
 
 I still want to progress the software to be F3K task based and give more task-specific timings and suggestions. But this will do for now...
