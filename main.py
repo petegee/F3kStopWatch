@@ -3,9 +3,10 @@ from pimoroni import Button
 import time
 
 class flight_time:
-    def __init__(self, start, stop):
+    def __init__(self, start, stop, valid=True):
         self.start = start
         self.stop = stop      
+        self.valid = valid
 
 display = PicoGraphics(display=DISPLAY_PICO_DISPLAY_2, rotate=90)
 WHITE = display.create_pen(255, 255, 255)
@@ -71,23 +72,26 @@ def renderTimes():
         index = index + 1
         display.set_pen(WHITE)
         display.text(f'{i+1}.', 20, 25*index+42, 200, 3)   
-        display.set_pen(GREEN)
+        if times[i].valid is True:
+            display.set_pen(GREEN)
+        else:
+            display.set_pen(RED)
+            display.line(76, 25*index+52, 188, 25*index+52)
+
         display.text(getFlightTimeAsString(times[i]), 80, 25*index+42, 200, 3)
 
     display.update()   
 
-def reset():
-    global timing, total_completed_times, skip
+
+def toggleStrikeOutLastTime():
+    global total_completed_times, times
     if timing == True:
         return
-    else:
-        times.clear()
-        timing = False
-        total_completed_times=0
-        skip=0
-        clear()
-        renderCurrentTimeBox(RED)
-        renderCurrentTime()
+    if total_completed_times < 1:
+        return
+    times[total_completed_times-1].valid = not times[total_completed_times-1].valid
+    renderTimes()
+    time.sleep(0.2)
 
 def startStopTimer():
     global timing
@@ -138,7 +142,7 @@ while True:
         overflowed_times_count =  total_completed_times - max_rows
 
     if button_a.is_pressed:
-        reset()
+        toggleStrikeOutLastTime()
         time.sleep(0.1)
         continue
     if button_b.is_pressed:
